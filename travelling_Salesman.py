@@ -4,7 +4,7 @@ def heuristic(graph, visited, current_node, start):
     unvisited = set(graph.keys()) - visited
     if len(unvisited) == 0:
         return graph[current_node][start]
-    return min(graph[current_node][n] for n in unvisited)
+    return min(graph[current_node].get(n, float('inf')) for n in unvisited)
 
 def a_star(graph, start):
     visited = set()
