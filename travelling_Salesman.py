@@ -1,44 +1,42 @@
-import itertools
+def solve(graph, startLoc):
+    visited = []
+    dist = 0
+    visited.append(startLoc)
+    
+    while len(visited) != len(graph):
+        nextNode, cost = findNearest(graph, visited, visited[-1])
+        visited.append(nextNode)
+        dist += cost
+    
+    currLoc = visited[-1]
+    lastList = graph[currLoc - 1]
+    
+    for element in lastList:
+        node, nextNode, cost = element
+        if nextNode == visited[0]:
+            visited.append(nextNode)
+            dist += cost
+            
+    return visited, dist
+        
+        
+def findNearest(graph, visited, currLoc):
+    
+    sublist = graph[currLoc-1]
+    sortedSubList = sorted(sublist, key=lambda x: x[2])
+    
+    for element in sortedSubList:
+        
+        node, nextNode, cost = element
+        if(nextNode not in visited):
+            return nextNode, cost
+    
+graph = [
+        [[1, 2, 10], [1, 3, 15], [1, 4, 20]],
+        [[2, 1, 10], [2, 3, 35], [2, 4, 25]],
+        [[3, 4, 30], [3, 1, 15], [3, 2, 35]],
+        [[4, 1, 20], [4, 2, 25], [4, 3, 30]]
+        ]
 
-def heuristic(graph, visited, current_node, start):
-    unvisited = set(graph.keys()) - visited
-    if len(unvisited) == 0:
-        return graph[current_node][start]
-    return min(graph[current_node].get(n, float('inf')) for n in unvisited)
-
-def a_star(graph, start):
-    visited = set()
-    path = []
-    total_cost = 0
-    open_list = [(0, start)]
-
-    while open_list:
-        cost, current_node = min(open_list)
-        open_list.remove((cost, current_node))
-        if current_node in visited:
-            continue
-        path.append(current_node)
-        visited.add(current_node)
-        if len(visited) == len(graph):
-            total_cost += graph[current_node][start]
-            path.append(start)
-            return path, total_cost
-        for neighbor, distance in graph[current_node].items():
-            if neighbor not in visited:
-                h = heuristic(graph, visited, neighbor, start)
-                open_list.append((distance + h, neighbor))
-        total_cost += cost
-
-    return None, None
-
-# Example usage
-graph = {
-    'A': {'B': 10, 'C': 15, 'D': 20},
-    'B': {'A': 10, 'C': 35, 'D': 25},
-    'C': {'A': 15, 'B': 35, 'D': 30},
-    'D': {'A': 20, 'B': 25, 'C': 30}
-}
-start_node = 'A'
-path, cost = a_star(graph, start_node)
-print("Path:", path)
-print("Total Cost:", cost)
+startLoc = 4
+print(solve(graph, startLoc))
